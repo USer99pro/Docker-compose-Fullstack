@@ -1,0 +1,23 @@
+version: "3.8"
+
+networks:
+  mern-stack:
+    name: mern-stack
+    driver: bridge
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8800:3000"
+    volumes:
+      - "./client:/app"
+      - "/app/node_modules" # ไม่ดึง node_modules ออกมานอก container
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    command: npm run dev
+    networks:
+      - mern-stack
+    restart: always

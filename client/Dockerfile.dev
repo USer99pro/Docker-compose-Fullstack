@@ -1,0 +1,20 @@
+# Build stage
+FROM node:18-alpine as build
+
+# Set working directory
+WORKDIR /app
+
+# Copy only package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application files
+COPY . .
+
+# Expose the application port
+EXPOSE 3000
+
+# Default command
+CMD ["npm", "run", "dev"]
