@@ -6,6 +6,7 @@ networks:
     driver: bridge
 
 services:
+  # Client Service
   client:
     build:
       context: ./client
@@ -21,3 +22,38 @@ services:
     networks:
       - mern-stack
     restart: always
+    depends_on:
+      - server
+
+  # Server Service
+  server:
+    build:
+      context: ./server
+      dockerfile: dockerfile.dev
+    ports:
+      - "5550:5000"
+    volumes:
+      - "./server:/app"
+      - "/app/node_modules" # ไม่ดึง node_modules ออกมานอก container
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - NODE_ENV=development
+    command: npm run dev
+    networks:
+      - mern-stack
+    restart: always
+    depends_on:
+      - mongodb
+
+  # MongoDB Service
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27099:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+    networks:
+      - mern-stack
+    restart: always
+volumes:
+   mongodb_data:
